@@ -1,1 +1,29 @@
 #Start_Script
+file="ip.txt"
+of=${1}
+to=${2}
+if [[ ! -f $file ]]
+then
+        for i in {0..255}
+        do
+                echo "2" >> $file
+        done
+fi
+
+if [[ -f $file ]]
+then
+        main=$(cat $file)
+        for (( i = of; i < to; i++ ))
+        do
+                stan=$(ping 10.7.180.${i} -c 1 &>>/dev/null ; echo $?)
+                if [ $stan -ne ${main[${i}]} ] ; then
+                        ${main[$i]}=$stan
+                        echo "zmina"
+                fi
+        done
+        rm -rf $file &>>/dev/null
+        for i in {0..255}
+        do
+                echo ${main[${i}]}  >> $file
+        done
+fi
