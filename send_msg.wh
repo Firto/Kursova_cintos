@@ -1,4 +1,4 @@
-apiToken='487851121:AAE-GK8cd2370ivprFbiaDsWgtHppr0Ssd0'
+apiToken='487851121:AAHCwDqSLHXS6xB5bIS_zylsiTWzae48mOs'
 text="$1"
 chatId="$2"
-curl -s -X POST https://api.telegram.org/bot${apiToken}/sendMessage -d text="$text" -d chat_id="$chatId" &> /dev/null
+curl -s -X POST https://api.telegram.org/bot${apiToken}/sendMessage -d text="$text" -d chat_id="$chatId" -d parse_mode="Markdown" &> /dev/null

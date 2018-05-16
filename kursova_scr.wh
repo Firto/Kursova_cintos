@@ -1,8 +1,9 @@
 #Start_Script
-file="ip.txt"
+id="364434810"
+file="/root/Kursova_cintos/ip.txt"
 of=${1}
 to=${2}
-if [[ ! -f $file ]]
+if [[ ! -s "$file" ]]
 then
         for i in {0..255}
         do
@@ -10,20 +11,24 @@ then
         done
 fi
 
-if [[ -f $file ]]
+if [[ -s "$file" ]]
 then
-        main=$(cat $file)
-        for (( i = of; i < to; i++ ))
+        main=( $(cat "$file") )
+        for (( i = of; i <= to; i++ ))
         do
-                stan=$(ping 10.7.180.${i} -c 1 &>>/dev/null ; echo $?)
-                if [ $stan -ne ${main[${i}]} ] ; then
-                        ${main[$i]}=$stan
-                        echo "zmina"
+                stan=$(ping 10.7.180.${i} -c 1 &>>/dev/null && echo "1" || echo "0")
+		if [ $stan -ne ${main[${i}]} ] ; then
+			if [ $stan -eq 1 ]
+			then
+				status="Enabled"
+			elif [ $stan -eq 0 ]
+			then
+				status="Disabled"
+			fi
+			echo -e "IP :10.7.180.${i}\nStatus: $status"
+                        /root/Kursova_cintos/send_msg.wh "IP: *10.7.180.${i}* %0AStatus: *${status}*" "$id"
+			main[$i]=$stan    
                 fi
         done
-        rm -rf $file &>>/dev/null
-        for i in {0..255}
-        do
-                echo ${main[${i}]}  >> $file
-        done
+	echo ${main[@]} > $file
 fi
