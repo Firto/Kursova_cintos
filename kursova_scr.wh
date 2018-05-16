@@ -14,10 +14,15 @@ fi
 if [[ -s "$file" ]]
 then
         main=( $(cat "$file") )
+	status_en=1
         for (( i = of; i <= to; i++ ))
         do
                 stan=$(ping 10.7.180.${i} -c 1 &>>/dev/null && echo "1" || echo "0")
 		if [ $stan -ne ${main[${i}]} ] ; then
+			if [ $status_en -eq 1 ] ; then
+				/root/Kursova_cintos/send_msg.wh "---NEW UPDATE---" "$id"
+				status_en=0
+			fi
 			if [ $stan -eq 1 ]
 			then
 				status="Enabled"
@@ -31,4 +36,7 @@ then
                 fi
         done
 	echo ${main[@]} > $file
+	if [ $status_en -eq 0 ] ; then
+        	/root/Kursova_cintos/send_msg.wh "---END UPDATE---" "$id"
+        fi
 fi
